@@ -1,11 +1,13 @@
 # Parser, based on John Aycock's SPARK examples
 
 from spark import GenericParser
+from spark import GenericASTBuilder
 from errors import GrammaticalError
+from ast import AST
 
-class CoreParser(GenericParser):
-    def __init__(self, start):
-        GenericParser.__init__(self, start)
+class CoreParser(GenericASTBuilder):
+    def __init__(self, ast, start):
+        GenericASTBuilder.__init__(self, ast, start)
 
     def typestring(self, token):
         return token.type
@@ -53,6 +55,7 @@ class CoreParser(GenericParser):
             number ::= eight
             number ::= nine
         '''
+        return args[0] + "##"
 
     def p_letter(self, args):
         '''
@@ -84,9 +87,18 @@ class CoreParser(GenericParser):
             letter ::= zulu
         '''
 
+    def terminal(self, token):
+        return AST(token)
+        #return GenericASTBuilder.terminal(self, type)
+
+    def nonterminal(self, type, args):
+        #print 'NT (', type, args, ')'
+        #return AST(type, args)
+        return GenericASTBuilder.nonterminal(self, type, args)
+
 class SingleInputParser(CoreParser):
     def __init__(self):
-        CoreParser.__init__(self, 'single_input')
+        CoreParser.__init__(self, AST, 'single_input')
 
     def p_single_input(self, args):
         '''

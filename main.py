@@ -3,6 +3,7 @@
 from scan import scan
 from parse import parse
 from errors import GrammaticalError
+from ast import printAST
 
 if __name__ == '__main__':
     import sys
@@ -19,7 +20,8 @@ if __name__ == '__main__':
 
         print ">", line,
         try:
-            parse(scan(line))
+            ast = parse(scan(line))
+            printAST(ast)
         except GrammaticalError as e:
             print "Error:", e
 
