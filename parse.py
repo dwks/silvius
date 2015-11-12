@@ -5,9 +5,9 @@ from spark import GenericASTBuilder
 from errors import GrammaticalError
 from ast import AST
 
-class CoreParser(GenericASTBuilder):
-    def __init__(self, ast, start):
-        GenericASTBuilder.__init__(self, ast, start)
+class CoreParser(GenericParser):
+    def __init__(self, start):
+        GenericParser.__init__(self, start)
 
     def typestring(self, token):
         return token.type
@@ -21,12 +21,18 @@ class CoreParser(GenericASTBuilder):
             chained_commands ::= single_command
             chained_commands ::= single_command chained_commands
         '''
+        if(len(args) == 1):
+            return AST('chain', None, [ args[0] ])
+        else:
+            args[1].children.insert(0, args[0])
+            return args[1]
 
     def p_single_command(self, args):
         '''
             single_command ::= letter
             single_command ::= movement
         '''
+        return args[0]
 
     def p_movement(self, args):
         '''
@@ -35,12 +41,22 @@ class CoreParser(GenericASTBuilder):
             movement ::= left   repeat
             movement ::= right  repeat
         '''
+        if args[1] != None:
+            return AST('repeat', [ args[1] ], [
+                AST('movement', [ args[0] ])
+            ])
+        else:
+            return AST('movement', [ args[0] ])
 
     def p_repeat(self, args):
         '''
             repeat ::=
             repeat ::= number
         '''
+        if len(args) > 0:
+            return AST(args[0])
+        else:
+            return None
 
     def p_number(self, args):
         '''
@@ -55,7 +71,7 @@ class CoreParser(GenericASTBuilder):
             number ::= eight
             number ::= nine
         '''
-        return args[0] + "##"
+        return args[0]
 
     def p_letter(self, args):
         '''
@@ -86,25 +102,21 @@ class CoreParser(GenericASTBuilder):
             letter ::= yankee
             letter ::= zulu
         '''
-
-    def terminal(self, token):
-        return AST(token)
-        #return GenericASTBuilder.terminal(self, type)
-
-    def nonterminal(self, type, args):
-        #print 'NT (', type, args, ')'
-        #return AST(type, args)
-        return GenericASTBuilder.nonterminal(self, type, args)
+        return AST('char', [ args[0] ])
 
 class SingleInputParser(CoreParser):
     def __init__(self):
-        CoreParser.__init__(self, AST, 'single_input')
+        CoreParser.__init__(self, 'single_input')
 
     def p_single_input(self, args):
         '''
             single_input ::= END
             single_input ::= chained_commands END
         '''
+        if len(args) > 0:
+            return args[0]
+        else:
+            return AST('')
 
 def parse(tokens):
     parser = SingleInputParser()

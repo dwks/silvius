@@ -2,6 +2,7 @@
 
 from scan import scan
 from parse import parse
+from execute import execute
 from errors import GrammaticalError
 from ast import printAST
 
@@ -22,6 +23,7 @@ if __name__ == '__main__':
         try:
             ast = parse(scan(line))
             printAST(ast)
+            execute(ast)
         except GrammaticalError as e:
             print "Error:", e
 
