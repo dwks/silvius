@@ -23,7 +23,7 @@ if __name__ == '__main__':
         try:
             ast = parse(scan(line))
             printAST(ast)
-            execute(ast)
+            execute(ast, f == sys.stdin)
         except GrammaticalError as e:
             print "Error:", e
 

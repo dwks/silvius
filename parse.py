@@ -102,7 +102,7 @@ class CoreParser(GenericParser):
             letter ::= yankee
             letter ::= zulu
         '''
-        return AST('char', [ args[0] ])
+        return AST('char', [ args[0].type[0] ])
 
 class SingleInputParser(CoreParser):
     def __init__(self):
