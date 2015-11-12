@@ -1,6 +1,7 @@
 # Parser, based on John Aycock's SPARK examples
 
 from spark import GenericParser
+from errors import GrammaticalError
 
 class CoreParser(GenericParser):
     def __init__(self, start):
@@ -10,8 +11,8 @@ class CoreParser(GenericParser):
         return token.type
 
     def error(self, token):
-        print "Syntax error at `%s' (word number %d)" % (token, token.wordno)
-        raise SystemExit
+        raise GrammaticalError(
+            "Unexpected token `%s' (word number %d)" % (token, token.wordno))
 
     def p_chained_commands(self, args):
         '''
