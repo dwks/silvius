@@ -22,3 +22,7 @@ class Automator:
         print "`%s`" % command
         if self.real:
             os.system(command)
+
+    def key(self, k):
+        if(len(k) > 1): k = k.capitalize()
+        self.xdo('key ' + k)

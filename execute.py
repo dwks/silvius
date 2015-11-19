@@ -11,19 +11,14 @@ class ExecuteCommands(GenericASTTraversal):
         self.automator.flush()
 
     def n_char(self, node):
-        node.command = 'key ' + str(node.meta[0])
-        self.automator.xdo(node.command)
+        self.automator.key(node.meta[0])
     def n_movement(self, node):
-        node.command = 'key ' + str(node.meta[0]).capitalize()
-        self.automator.xdo(node.command)
+        self.automator.key(node.meta[0].type)
 
     def n_repeat(self, node):
-        xdo = self.automator.xdo_list[0]
-        for n in range(1, 3):
+        xdo = self.automator.xdo_list[-1]
+        for n in range(1, node.meta[0]):
             self.automator.xdo(xdo)
-#        node.command = 'for x in `seq 1 ' + str(node.meta[0]) + '`; do ' \
-#            + node.children[0].command \
-#            + '; done'
 
     def default(self, node):
 #        for child in node.children:

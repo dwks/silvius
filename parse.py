@@ -54,7 +54,7 @@ class CoreParser(GenericParser):
             repeat ::= number
         '''
         if len(args) > 0:
-            return AST(args[0])
+            return args[0]
         else:
             return None
 
@@ -71,7 +71,22 @@ class CoreParser(GenericParser):
             number ::= eight
             number ::= nine
         '''
-        return args[0]
+        # doesn't work right now
+        #for v in value:
+        #    self.__doc__ += "number ::= " + v
+        value = {
+            'zero'  : 0,
+            'one'   : 1,
+            'two'   : 2,
+            'three' : 3,
+            'four'  : 4,
+            'five'  : 5,
+            'six'   : 6,
+            'seven' : 7,
+            'eight' : 8,
+            'nine'  : 9
+        }
+        return value[args[0].type]
 
     def p_letter(self, args):
         '''
