@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE grammar PUBLIC "-//W3C//DTD GRAMMAR 1.0//EN"
+    "http://www.w3.org/TR/speech-grammar/grammar.dtd">
+<grammar xmlns="http://www.w3.org/2001/06/grammar" xml:lang="en"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xsi:schemaLocation="http://www.w3.org/2001/06/grammar http://www.w3.org/TR/speech-grammar/grammar.xsd"
+    version="1.0" mode="voice" root="root">
+    
+    <meta name="author" content="dwk"/>
+    
+    <rule id="root" scope="public">
+        <example>right</example>
+        <example>left down two</example>
+        <example>delta arch tango arch</example>
+
+        <item repeat="0-1">
+            <rule-ref uri="#singleRoot" />
+        </item>
+    </rule>
+
+    <rule id="singleRoot" scope="public">
+        <one-of>
+            <item>
+                <rule-ref uri="#direction" />
+                <item repeat="0-1">
+                    <rule-ref uri="#number" />
+                </item>
+            </item>
+            <rule-ref uri="#anyLetter" />
+            <rule-ref uri="#character" />
+        </one-of>
+    </rule>
+
+    <rule id="direction">
+        <one-of>
+            <item>up    <tag>r = 'up'</tag></item>
+            <item>down  <tag>r = 'down'</tag></item>
+            <item>left  <tag>r = 'left'</tag></item>
+            <item>right <tag>r = 'right'</tag></item>
+        </one-of>
+    </rule>
+
+    <rule id="number">
+        <one-of>
+            <item>one   <tag>r = 1</tag></item>
+            <item>two   <tag>r = 2</tag></item>
+            <item>three <tag>r = 3</tag></item>
+            <item>four  <tag>r = 4</tag></item>
+            <item>five  <tag>r = 5</tag></item>
+            <item>six   <tag>r = 6</tag></item>
+            <item>seven <tag>r = 7</tag></item>
+            <item>eight <tag>r = 8</tag></item>
+            <item>nine  <tag>r = 9</tag></item>
+        </one-of>
+    </rule>
+
+    <rule id="anyLetter">
+        <item repeat="0-1">sky</item>
+        <rule-ref uri="#letter" />
+    </rule>
+
+    <rule id="letter">
+        <one-of>
+            <item>arch      <tag>r = 'a'</tag></item>
+            <item>brav      <tag>r = 'b'</tag></item>
+            <item>charlie   <tag>r = 'c'</tag></item>
+            <item>delta     <tag>r = 'd'</tag></item>
+            <item>echo      <tag>r = 'e'</tag></item>
+            <item>fox       <tag>r = 'f'</tag></item>
+            <item>golf      <tag>r = 'g'</tag></item>
+            <item>hotel     <tag>r = 'h'</tag></item>
+            <item>india     <tag>r = 'i'</tag></item>
+            <item>julia     <tag>r = 'j'</tag></item>
+            <item>kilo      <tag>r = 'k'</tag></item>
+            <item>line      <tag>r = 'l'</tag></item>
+            <item>mike      <tag>r = 'm'</tag></item>
+            <item>november  <tag>r = 'n'</tag></item>
+            <item>oscar     <tag>r = 'o'</tag></item>
+            <item>papa      <tag>r = 'p'</tag></item>
+            <item>queen     <tag>r = 'q'</tag></item>
+            <item>romeo     <tag>r = 'r'</tag></item>
+            <item>sierra    <tag>r = 's'</tag></item>
+            <item>tango     <tag>r = 't'</tag></item>
+            <item>uniform   <tag>r = 'u'</tag></item>
+            <item>victor    <tag>r = 'v'</tag></item>
+            <item>whiskey   <tag>r = 'w'</tag></item>
+            <item>x-ray     <tag>r = 'x'</tag></item>
+            <item>yankee    <tag>r = 'y'</tag></item>
+            <item>zulu      <tag>r = 'z'</tag></item>
+        </one-of>
+    </rule>
+
+    <rule id="character">
+        <one-of>
+            <item>space     <tag>r = ' '</tag></item>
+            <item>calm      <tag>r = ','</tag></item>
+            <item>dot       <tag>r = '.'</tag></item>
+            <item>dit       <tag>r = '.'</tag></item>
+            <item>single quote<tag>r = "'"</tag></item>
+            <item>double quote<tag>r = '"'</tag></item>
+            <item>slash     <tag>r = '/'</tag></item>
+            <item>question  <tag>r = '?'</tag></item>
+        </one-of>
+    </rule>
+</grammar>
