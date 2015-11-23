@@ -12,6 +12,8 @@ class ExecuteCommands(GenericASTTraversal):
 
     def n_char(self, node):
         self.automator.key(node.meta[0])
+    def n_raw_char(self, node):
+        self.automator.raw_key(node.meta[0])
     def n_movement(self, node):
         self.automator.key(node.meta[0].type)
 

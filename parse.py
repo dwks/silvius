@@ -30,7 +30,9 @@ class CoreParser(GenericParser):
     def p_single_command(self, args):
         '''
             single_command ::= letter
+            single_command ::= sky_letter
             single_command ::= movement
+            single_command ::= character
         '''
         return args[0]
 
@@ -88,6 +90,14 @@ class CoreParser(GenericParser):
         }
         return value[args[0].type]
 
+    def p_sky_letter(self, args):
+        '''
+            sky_letter ::= sky letter
+        '''
+        ast = args[1]
+        ast.meta[0] = ast.meta[0].upper()
+        return ast
+
     def p_letter(self, args):
         '''
             letter ::= arch
@@ -118,6 +128,24 @@ class CoreParser(GenericParser):
             letter ::= zulu
         '''
         return AST('char', [ args[0].type[0] ])
+
+    def p_character(self, args):
+        '''
+            character ::= act
+            character ::= slap
+            character ::= colon
+            character ::= single quote
+            character ::= double quote
+            character ::= equal
+        '''
+        value = {
+            'act'   : 'Escape',
+            'slap'  : 'Return',
+            'colon' : 'colon',
+            'single': 'apostrophe',
+            'double': 'quotedbl'
+        }
+        return AST('raw_char', [ value[args[0].type] ])
 
 class SingleInputParser(CoreParser):
     def __init__(self):
