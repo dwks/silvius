@@ -33,6 +33,7 @@ class CoreParser(GenericParser):
             single_command ::= sky_letter
             single_command ::= movement
             single_command ::= character
+            single_command ::= editing
         '''
         return args[0]
 
@@ -104,6 +105,7 @@ class CoreParser(GenericParser):
             letter ::= bravo
             letter ::= charlie
             letter ::= delta
+            letter ::= eco
             letter ::= echo
             letter ::= fox
             letter ::= golf
@@ -123,6 +125,7 @@ class CoreParser(GenericParser):
             letter ::= uniform
             letter ::= victor
             letter ::= whiskey
+            letter ::= whisky
             letter ::= xray
             letter ::= yankee
             letter ::= zulu
@@ -132,20 +135,71 @@ class CoreParser(GenericParser):
     def p_character(self, args):
         '''
             character ::= act
-            character ::= slap
             character ::= colon
             character ::= single quote
             character ::= double quote
             character ::= equal
+            character ::= space
+            character ::= tab
+            character ::= bang
+            character ::= hash
+            character ::= dollar
+            character ::= percent
+            character ::= carrot
+            character ::= ampersand
+            character ::= star
+            character ::= late
+            character ::= rate
+            character ::= minus
+            character ::= underscore
+            character ::= plus
+            character ::= backslash
+            character ::= dot
+            character ::= slash
+            character ::= question
         '''
         value = {
             'act'   : 'Escape',
-            'slap'  : 'Return',
             'colon' : 'colon',
             'single': 'apostrophe',
-            'double': 'quotedbl'
+            'double': 'quotedbl',
+            'equal' : 'equal',
+            'space' : 'space',
+            'tab'   : 'Tab',
+            'bang'  : 'exclam',
+            'hash'  : 'numbersign',
+            'dollar': 'dollar',
+            'percent': 'percent',
+            'carrot': 'caret',
+            'ampersand': 'ampersand',
+            'star': 'asterisk',
+            'late': 'parenleft',
+            'rate': 'parenright',
+            'minus': 'minus',
+            'underscore': 'underscore',
+            'plus': 'plus',
+            'backslash': 'backslash',
+            'dot': 'period',
+            'slash': 'slash',
+            'question': 'question'
         }
         return AST('raw_char', [ value[args[0].type] ])
+
+    def p_editing(self, args):
+        '''
+            editing ::= slap        repeat
+            editing ::= scratch     repeat
+        '''
+        value = {
+            'slap'  : 'Return',
+            'scratch': 'BackSpace'
+        }
+        if args[1] != None:
+            return AST('repeat', [ args[1] ], [
+                AST('raw_char', [ value[args[0].type] ])
+            ])
+        else:
+            return AST('raw_char', [ value[args[0].type] ])
 
 class SingleInputParser(CoreParser):
     def __init__(self):
