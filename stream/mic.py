@@ -1,81 +1,45 @@
-__author__ = 'tanel'
+# Silvius microphone client based on Tanel's client.py
+__author__ = 'dwk'
 
 import argparse
 from ws4py.client.threadedclient import WebSocketClient
-import time
 import threading
 import sys
 import urllib
 import Queue
 import json
-import time
-import os
 
 debug_partial = True
 
-def rate_limited(maxPerSecond):
-    minInterval = 1.0 / float(maxPerSecond)
-    def decorate(func):
-        lastTimeCalled = [0.0]
-        def rate_limited_function(*args,**kargs):
-            elapsed = time.clock() - lastTimeCalled[0]
-            leftToWait = minInterval - elapsed
-            if leftToWait>0:
-                time.sleep(leftToWait)
-            ret = func(*args,**kargs)
-            lastTimeCalled[0] = time.clock()
-            return ret
-        return rate_limited_function
-    return decorate
-
-
 class MyClient(WebSocketClient):
 
-    def __init__(self, filename, url, protocols=None, extensions=None, heartbeat_freq=None, byterate=32000,
+    def __init__(self, url, protocols=None, extensions=None, heartbeat_freq=None, byterate=16000,
                  save_adaptation_state_filename=None, send_adaptation_state_filename=None):
         super(MyClient, self).__init__(url, protocols, extensions, heartbeat_freq)
         self.final_hyps = []
-        self.fn = filename
         self.byterate = byterate
         self.save_adaptation_state_filename = save_adaptation_state_filename
         self.send_adaptation_state_filename = send_adaptation_state_filename
 
-    @rate_limited(4)
     def send_data(self, data):
         self.send(data, binary=True)
 
-    def opened0(self):
-        #print "Socket opened!"
-        def send_data_to_ws():
-            f = open(self.fn, "rb")
-            if self.send_adaptation_state_filename is not None:
-                print >> sys.stderr, "Sending adaptation state from %s" % self.send_adaptation_state_filename
-                try:
-                    adaptation_state_props = json.load(open(self.send_adaptation_state_filename, "r"))
-                    self.send(json.dumps(dict(adaptation_state=adaptation_state_props)))
-                except:
-                    e = sys.exc_info()[0]
-                    print >> sys.stderr, "Failed to send adaptation state: ",  e
-            for block in iter(lambda: f.read(self.byterate/4), ""):
-                #print >> sys.stderr, "Sending", len(block), "bytes"
-                self.send_data(block)
-            print >> sys.stderr, "Audio sent, now sending EOS"
-            self.send("EOS")
-        t = threading.Thread(target=send_data_to_ws)
-        t.start()
     def opened(self):
+        # set up a queue so data can be grabbed from pyaudio and put here 
+        # right away without blocking (we must poll pyaudio quickly)
         Q = Queue.Queue()
 
         def mic_to_ws():
             import pyaudio
             pa = pyaudio.PyAudio()
             stream = pa.open(
-                rate = 16000,
+                rate = self.byterate,
                 format = pyaudio.paInt16,
                 channels = 1,
                 input = True,
                 input_device_index = 2)
             try:
+                print >> sys.stderr, "Listening to microphone"
                 while True:
                     #print >> sys.stderr, "read..."
                     data = stream.read(2048*2)
@@ -86,13 +50,10 @@ class MyClient(WebSocketClient):
                     #print >> sys.stderr, "done"
             except IOError, e:
                 print e
-                pass
             self.send_data("")
             self.send("EOS")
 
-        #t = threading.Thread(target=send_data_to_ws)
-        t = threading.Thread(target=mic_to_ws)
-        t.start()
+        threading.Thread(target=mic_to_ws).start()
 
         def send_on():
             while True:
@@ -139,29 +100,25 @@ class MyClient(WebSocketClient):
 
 
 def main():
+    content_type = "audio/x-raw, layout=(string)interleaved, rate=(int)16000, format=(string)S16LE, channels=(int)1"
+    path = 'client/ws/speech'
 
-    parser = argparse.ArgumentParser(description='Command line client for kaldigstserver')
-    parser.add_argument('-u', '--uri', default="ws://localhost:8888/client/ws/speech", dest="uri", help="Server websocket URI")
-    parser.add_argument('-r', '--rate', default=32000, dest="rate", type=int, help="Rate in bytes/sec at which audio should be sent to the server. NB! For raw 16-bit audio it must be 2*samplerate!")
+    parser = argparse.ArgumentParser(description='Microphone client for silvius')
+    parser.add_argument('-s', '--server', default="localhost", dest="server", help="Speech-recognition server")
+    parser.add_argument('-p', '--port', default="8019", dest="port", help="Server port")
+    parser.add_argument('-r', '--rate', default=16000, dest="rate", type=int, help="Rate in bytes/sec at which audio should be sent to the server.")
     parser.add_argument('--save-adaptation-state', help="Save adaptation state to file")
     parser.add_argument('--send-adaptation-state', help="Send adaptation state from file")
-    parser.add_argument('--content-type', default='', help="Use the specified content type (empty by default, for raw files the default is  audio/x-raw, layout=(string)interleaved, rate=(int)<rate>, format=(string)S16LE, channels=(int)1")
-    parser.add_argument('audiofile', help="Audio file to be sent to the server")
+    parser.add_argument('--content-type', default=content_type, help="Use the specified content type (default is " + content_type + ")")
     args = parser.parse_args()
 
     content_type = args.content_type
-    if content_type == '': #and args.audiofile.endswith(".raw"):
-        content_type = "audio/x-raw, layout=(string)interleaved, rate=(int)%d, format=(string)S16LE, channels=(int)1" %(args.rate/2)
-        content_type = "audio/x-raw, layout=(string)non-interleaved, coding=linear, rate=(int)8000, format=(string)S16LE, channels=(int)1"
-        content_type = "audio/x-raw, layout=(string)interleaved, rate=(int)8000, format=(string)S16LE, channels=(int)2"
-        content_type = "audio/x-raw, layout=(string)interleaved, rate=(int)8000, format=(string)S16LE, channels=(int)1"
-        content_type = "audio/x-raw, layout=(string)interleaved, rate=(int)32000, format=(string)S16LE, channels=(int)1"
-        content_type = "audio/x-raw, layout=(string)interleaved, rate=(int)16000, format=(string)S16LE, channels=(int)1"
-        #content_type = "audio/x-wav"
     print >> sys.stderr, "Content-Type:", content_type
 
+    uri = "ws://%s:%s/%s?%s" % (args.server, args.port, path, urllib.urlencode([("content-type", content_type)]))
+    print >> sys.stderr, "Connecting to", uri
 
-    ws = MyClient(args.audiofile, args.uri + '?%s' % (urllib.urlencode([("content-type", content_type)])), byterate=args.rate,
+    ws = MyClient(uri, byterate=args.rate,
                   save_adaptation_state_filename=args.save_adaptation_state, send_adaptation_state_filename=args.send_adaptation_state)
     ws.connect()
     #result = ws.get_full_hyp()
