@@ -32,12 +32,22 @@ class MyClient(WebSocketClient):
         def mic_to_ws():
             import pyaudio
             pa = pyaudio.PyAudio()
-            stream = pa.open(
-                rate = self.byterate,
-                format = pyaudio.paInt16,
-                channels = 1,
-                input = True,
-                input_device_index = self.mic)
+            if self.mic == -1:
+                print "Using default mic"
+                stream = pa.open(
+                    rate = self.byterate,
+                    format = pyaudio.paInt16,
+                    channels = 1,
+                    input = True)
+            else:
+                print "Using mic #", self.mic
+                stream = pa.open(
+                    rate = self.byterate,
+                    format = pyaudio.paInt16,
+                    channels = 1,
+                    input = True,
+                    input_device_index = self.mic)
+
             try:
                 print >> sys.stderr, "Listening to microphone"
                 while True:
@@ -102,7 +112,7 @@ def main():
     parser.add_argument('-s', '--server', default="localhost", dest="server", help="Speech-recognition server")
     parser.add_argument('-p', '--port', default="8019", dest="port", help="Server port")
     parser.add_argument('-r', '--rate', default=16000, dest="rate", type=int, help="Rate in bytes/sec at which audio should be sent to the server.")
-    parser.add_argument('-d', '--device', default="1", dest="device", type=int, help="Select a different microphone (default: 1)")
+    parser.add_argument('-d', '--device', default="-1", dest="device", type=int, help="Select a different microphone (give device ID)")
     parser.add_argument('--save-adaptation-state', help="Save adaptation state to file")
     parser.add_argument('--send-adaptation-state', help="Send adaptation state from file")
     parser.add_argument('--content-type', default=content_type, help="Use the specified content type (default is " + content_type + ")")
