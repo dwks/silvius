@@ -9,14 +9,14 @@ import urllib
 import Queue
 import json
 
-debug_partial = True
-
 class MyClient(WebSocketClient):
 
-    def __init__(self, url, protocols=None, extensions=None, heartbeat_freq=None, byterate=16000,
+    def __init__(self, url, mic=1, protocols=None, extensions=None, heartbeat_freq=None, byterate=16000,
+                 show_hypotheses=True,
                  save_adaptation_state_filename=None, send_adaptation_state_filename=None):
         super(MyClient, self).__init__(url, protocols, extensions, heartbeat_freq)
-        self.final_hyps = []
+        self.mic = mic
+        self.show_hypotheses = show_hypotheses
         self.byterate = byterate
         self.save_adaptation_state_filename = save_adaptation_state_filename
         self.send_adaptation_state_filename = send_adaptation_state_filename
@@ -41,13 +41,10 @@ class MyClient(WebSocketClient):
             try:
                 print >> sys.stderr, "Listening to microphone"
                 while True:
-                    #print >> sys.stderr, "read..."
                     data = stream.read(2048*2)
                     #print >> sys.stderr, "sending", len(data), "bytes... ",
-                    #print >> sys.stderr, data
                     #self.send_data(data)
                     Q.put(data)
-                    #print >> sys.stderr, "done"
             except IOError, e:
                 print e
             self.send_data("")
@@ -71,13 +68,11 @@ class MyClient(WebSocketClient):
             if 'result' in response:
                 trans = response['result']['hypotheses'][0]['transcript']
                 if response['result']['final']:
-                    #print >> sys.stderr, trans,
-                    self.final_hyps.append(trans)
-                    if debug_partial:
+                    if self.show_hypotheses:
                         print >> sys.stderr, '\r%s' % trans.replace("\n", "\\n")
-                    print '%s' % trans.replace("\n", "\\n")
+                    print '%s' % trans.replace("\n", "\\n")  # final result!
                     sys.stdout.flush()
-                elif debug_partial:
+                elif self.show_hypotheses:
                     print_trans = trans.replace("\n", "\\n")
                     if len(print_trans) > 80:
                         print_trans = "... %s" % print_trans[-76:]
@@ -107,9 +102,11 @@ def main():
     parser.add_argument('-s', '--server', default="localhost", dest="server", help="Speech-recognition server")
     parser.add_argument('-p', '--port', default="8019", dest="port", help="Server port")
     parser.add_argument('-r', '--rate', default=16000, dest="rate", type=int, help="Rate in bytes/sec at which audio should be sent to the server.")
+    parser.add_argument('-m', '--mic', default="1", dest="mic", type=int, help="Select a different microphone (default: 1)")
     parser.add_argument('--save-adaptation-state', help="Save adaptation state to file")
     parser.add_argument('--send-adaptation-state', help="Send adaptation state from file")
     parser.add_argument('--content-type', default=content_type, help="Use the specified content type (default is " + content_type + ")")
+    parser.add_argument('--hypotheses', default=True, type=int, help="Show partial recognition hypotheses (default: 1)")
     args = parser.parse_args()
 
     content_type = args.content_type
@@ -118,7 +115,7 @@ def main():
     uri = "ws://%s:%s/%s?%s" % (args.server, args.port, path, urllib.urlencode([("content-type", content_type)]))
     print >> sys.stderr, "Connecting to", uri
 
-    ws = MyClient(uri, byterate=args.rate,
+    ws = MyClient(uri, byterate=args.rate, mic=args.mic, show_hypotheses=args.hypotheses,
                   save_adaptation_state_filename=args.save_adaptation_state, send_adaptation_state_filename=args.send_adaptation_state)
     ws.connect()
     #result = ws.get_full_hyp()
