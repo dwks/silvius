@@ -37,7 +37,7 @@ class MyClient(WebSocketClient):
                 format = pyaudio.paInt16,
                 channels = 1,
                 input = True,
-                input_device_index = 2)
+                input_device_index = self.mic)
             try:
                 print >> sys.stderr, "Listening to microphone"
                 while True:
@@ -102,7 +102,7 @@ def main():
     parser.add_argument('-s', '--server', default="localhost", dest="server", help="Speech-recognition server")
     parser.add_argument('-p', '--port', default="8019", dest="port", help="Server port")
     parser.add_argument('-r', '--rate', default=16000, dest="rate", type=int, help="Rate in bytes/sec at which audio should be sent to the server.")
-    parser.add_argument('-m', '--mic', default="1", dest="mic", type=int, help="Select a different microphone (default: 1)")
+    parser.add_argument('-d', '--device', default="1", dest="device", type=int, help="Select a different microphone (default: 1)")
     parser.add_argument('--save-adaptation-state', help="Save adaptation state to file")
     parser.add_argument('--send-adaptation-state', help="Send adaptation state from file")
     parser.add_argument('--content-type', default=content_type, help="Use the specified content type (default is " + content_type + ")")
@@ -115,7 +115,7 @@ def main():
     uri = "ws://%s:%s/%s?%s" % (args.server, args.port, path, urllib.urlencode([("content-type", content_type)]))
     print >> sys.stderr, "Connecting to", uri
 
-    ws = MyClient(uri, byterate=args.rate, mic=args.mic, show_hypotheses=args.hypotheses,
+    ws = MyClient(uri, byterate=args.rate, mic=args.device, show_hypotheses=args.hypotheses,
                   save_adaptation_state_filename=args.save_adaptation_state, send_adaptation_state_filename=args.send_adaptation_state)
     ws.connect()
     #result = ws.get_full_hyp()
