@@ -49,7 +49,7 @@ class MyClient(WebSocketClient):
                     input_device_index = self.mic)
 
             try:
-                print >> sys.stderr, "Listening to microphone"
+                print >> sys.stderr, "\nLISTENING TO MICROPHONE"
                 while True:
                     data = stream.read(2048*2)
                     #print >> sys.stderr, "sending", len(data), "bytes... ",
