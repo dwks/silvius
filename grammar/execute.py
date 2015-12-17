@@ -16,6 +16,9 @@ class ExecuteCommands(GenericASTTraversal):
         self.automator.raw_key(node.meta[0])
     def n_movement(self, node):
         self.automator.key(node.meta[0].type)
+    def n_sequence(self, node):
+        for c in node.meta[0]:
+            self.automator.raw_key(c)
 
     def n_repeat(self, node):
         xdo = self.automator.xdo_list[-1]

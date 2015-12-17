@@ -34,6 +34,7 @@ class CoreParser(GenericParser):
             single_command ::= movement
             single_command ::= character
             single_command ::= editing
+            single_command ::= english
         '''
         return args[0]
 
@@ -200,6 +201,12 @@ class CoreParser(GenericParser):
             ])
         else:
             return AST('raw_char', [ value[args[0].type] ])
+
+    def p_english(self, args):
+        '''
+            english ::= word ANY
+        '''
+        return AST('sequence', [ args[1].extra ])
 
 class SingleInputParser(CoreParser):
     def __init__(self):
