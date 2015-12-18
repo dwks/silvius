@@ -19,6 +19,16 @@ class ExecuteCommands(GenericASTTraversal):
     def n_sequence(self, node):
         for c in node.meta[0]:
             self.automator.raw_key(c)
+    def n_word_sequence(self, node):
+        n = len(node.children)
+        for i in range(0, n):
+            word = node.children[i].meta
+            for c in word:
+                self.automator.raw_key(c)
+            if(i + 1 < n):
+                self.automator.raw_key('space')
+    def n_null(self, node):
+        pass
 
     def n_repeat(self, node):
         xdo = self.automator.xdo_list[-1]

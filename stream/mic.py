@@ -33,14 +33,14 @@ class MyClient(WebSocketClient):
             import pyaudio
             pa = pyaudio.PyAudio()
             if self.mic == -1:
-                print "Using default mic"
+                print >> sys.stderr, "Using default mic"
                 stream = pa.open(
                     rate = self.byterate,
                     format = pyaudio.paInt16,
                     channels = 1,
                     input = True)
             else:
-                print "Using mic #", self.mic
+                print >> sys.stderr, "Using mic #", self.mic
                 stream = pa.open(
                     rate = self.byterate,
                     format = pyaudio.paInt16,

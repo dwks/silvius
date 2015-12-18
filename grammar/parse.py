@@ -35,6 +35,8 @@ class CoreParser(GenericParser):
             single_command ::= character
             single_command ::= editing
             single_command ::= english
+            single_command ::= word_sentence
+            single_command ::= word_phrase
         '''
         return args[0]
 
@@ -128,9 +130,11 @@ class CoreParser(GenericParser):
             letter ::= whiskey
             letter ::= whisky
             letter ::= xray
+            letter ::= expert
             letter ::= yankee
             letter ::= zulu
         '''
+        if(args[0].type == 'expert'): args[0].type = 'x'
         return AST('char', [ args[0].type[0] ])
 
     def p_character(self, args):
@@ -207,6 +211,32 @@ class CoreParser(GenericParser):
             english ::= word ANY
         '''
         return AST('sequence', [ args[1].extra ])
+
+    def p_word_sentence(self, args):
+        '''
+            word_sentence ::= sentence word_repeat
+        '''
+        if(len(args[1].children) > 0):
+            args[1].children[0].meta = args[1].children[0].meta.capitalize()
+        return args[1]
+
+    def p_word_phrase(self, args):
+        '''
+            word_phrase ::= phrase word_repeat
+        '''
+        return args[1]
+
+    def p_word_repeat(self, args):
+        '''
+            word_repeat ::= ANY
+            word_repeat ::= ANY word_repeat
+        '''
+        if(len(args) == 1):
+            return AST('word_sequence', None,
+                [ AST('null', args[0].extra) ])
+        else:
+            args[1].children.insert(0, AST('null', args[0].extra))
+            return args[1]
 
 class SingleInputParser(CoreParser):
     def __init__(self):
