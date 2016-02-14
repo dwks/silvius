@@ -14,3 +14,10 @@ for i in range(0, pa.get_device_count()):
         print "    %s" % info['name']
         print "    input channels = %d, output channels = %d" \
             % (info['maxInputChannels'], info['maxOutputChannels'])
+        try:
+            supports16k = pa.is_format_supported(16000,  # sample rate
+                input_device = info['index'],
+                input_channels = info['maxInputChannels'],
+                input_format = pyaudio.paInt16)
+        except ValueError:
+            print "    NOTE: 16k sampling not supported, configure pulseaudio to use this device"

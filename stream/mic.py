@@ -32,21 +32,32 @@ class MyClient(WebSocketClient):
         def mic_to_ws():
             import pyaudio
             pa = pyaudio.PyAudio()
-            if self.mic == -1:
-                print >> sys.stderr, "Using default mic"
-                stream = pa.open(
-                    rate = self.byterate,
-                    format = pyaudio.paInt16,
-                    channels = 1,
-                    input = True)
-            else:
-                print >> sys.stderr, "Using mic #", self.mic
-                stream = pa.open(
-                    rate = self.byterate,
-                    format = pyaudio.paInt16,
-                    channels = 1,
-                    input = True,
-                    input_device_index = self.mic)
+            try:
+                if self.mic == -1:
+                    print >> sys.stderr, "Using default mic"
+                    stream = pa.open(
+                        rate = self.byterate,
+                        format = pyaudio.paInt16,
+                        channels = 1,
+                        input = True)
+                else:
+                    print >> sys.stderr, "Using mic #", self.mic
+                    stream = pa.open(
+                        rate = self.byterate,
+                        format = pyaudio.paInt16,
+                        channels = 1,
+                        input = True,
+                        input_device_index = self.mic)
+            except IOError, e:
+                if(e.errno == 'Invalid sample rate'):
+                    print >> sys.stderr, "\n", e
+                    print >> sys.stderr, "\nCould not open microphone. 16K sampling not directly supported."
+                    print >> sys.stderr, "Instead of using this device directly, please configure it from"
+                    print >> sys.stderr, "within alsa or pulseaudio (run pavucontrol), which can do resampling."
+                else:
+                    print >> sys.stderr, "\n", e
+                    print >> sys.stderr, "\nCould not open microphone. Please try a different device."
+                return
 
             try:
                 print >> sys.stderr, "\nLISTENING TO MICROPHONE"
