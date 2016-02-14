@@ -24,6 +24,9 @@ class Automator:
             os.system(command)
 
     def raw_key(self, k):
+        if(k == "'"): k = 'apostrophe'
+        elif(k == '.'): k = 'period'
+        elif(k == '-'): k = 'minus'
         self.xdo('key ' + k)
     def key(self, k):
         if(len(k) > 1): k = k.capitalize()
