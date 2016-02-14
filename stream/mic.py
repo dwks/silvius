@@ -6,7 +6,6 @@ from ws4py.client.threadedclient import WebSocketClient
 import threading
 import sys
 import urllib
-import Queue
 import json
 
 class MyClient(WebSocketClient):
@@ -25,60 +24,44 @@ class MyClient(WebSocketClient):
         self.send(data, binary=True)
 
     def opened(self):
-        # set up a queue so data can be grabbed from pyaudio and put here 
-        # right away without blocking (we must poll pyaudio quickly)
-        Q = Queue.Queue()
+        import pyaudio
+        pa = pyaudio.PyAudio()
+        try:
+            mic = self.mic
+            if mic == -1:
+                mic = pa.get_default_input_device_info()['index']
+                print >> sys.stderr, "Selecting default mic"
+            print >> sys.stderr, "Using mic #", mic
+            stream = pa.open(
+                rate = self.byterate,
+                format = pyaudio.paInt16,
+                channels = 1,
+                input = True,
+                input_device_index = mic)
+        except IOError, e:
+            if(e.errno == 'Invalid sample rate'):
+                print >> sys.stderr, "\n", e
+                print >> sys.stderr, "\nCould not open microphone. 16K sampling not directly supported."
+                print >> sys.stderr, "Instead of using this device directly, please configure it from"
+                print >> sys.stderr, "within alsa or pulseaudio (run pavucontrol), which can do resampling."
+            else:
+                print >> sys.stderr, "\n", e
+                print >> sys.stderr, "\nCould not open microphone. Please try a different device."
+            sys.exit(1)
 
-        def mic_to_ws():
-            import pyaudio
-            pa = pyaudio.PyAudio()
-            try:
-                if self.mic == -1:
-                    print >> sys.stderr, "Using default mic"
-                    stream = pa.open(
-                        rate = self.byterate,
-                        format = pyaudio.paInt16,
-                        channels = 1,
-                        input = True)
-                else:
-                    print >> sys.stderr, "Using mic #", self.mic
-                    stream = pa.open(
-                        rate = self.byterate,
-                        format = pyaudio.paInt16,
-                        channels = 1,
-                        input = True,
-                        input_device_index = self.mic)
-            except IOError, e:
-                if(e.errno == 'Invalid sample rate'):
-                    print >> sys.stderr, "\n", e
-                    print >> sys.stderr, "\nCould not open microphone. 16K sampling not directly supported."
-                    print >> sys.stderr, "Instead of using this device directly, please configure it from"
-                    print >> sys.stderr, "within alsa or pulseaudio (run pavucontrol), which can do resampling."
-                else:
-                    print >> sys.stderr, "\n", e
-                    print >> sys.stderr, "\nCould not open microphone. Please try a different device."
-                return
-
+        def mic_to_ws():  # uses stream
             try:
                 print >> sys.stderr, "\nLISTENING TO MICROPHONE"
                 while True:
                     data = stream.read(2048*2)
                     #print >> sys.stderr, "sending", len(data), "bytes... ",
-                    #self.send_data(data)
-                    Q.put(data)
+                    self.send_data(data)
             except IOError, e:
                 print e
             self.send_data("")
             self.send("EOS")
 
         threading.Thread(target=mic_to_ws).start()
-
-        def send_on():
-            while True:
-                #print >> sys.stderr, "send"
-                q = Q.get()
-                self.send_data(q)
-        threading.Thread(target=send_on).start()
 
 
     def received_message(self, m):
@@ -115,7 +98,7 @@ class MyClient(WebSocketClient):
         pass
 
 
-def main():
+def setup():
     content_type = "audio/x-raw, layout=(string)interleaved, rate=(int)16000, format=(string)S16LE, channels=(int)1"
     path = 'client/ws/speech'
 
@@ -142,6 +125,12 @@ def main():
     #result = ws.get_full_hyp()
     #print result.encode('utf-8')
     ws.run_forever()
+
+def main():
+    try:
+        setup()
+    except KeyboardInterrupt:
+        print >> sys.stderr, "\nexiting..."
 
 if __name__ == "__main__":
     main()
