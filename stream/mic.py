@@ -8,6 +8,9 @@ import sys
 import urllib
 import json
 
+reconnect_mode = False
+fatal_error = False
+
 class MyClient(WebSocketClient):
 
     def __init__(self, url, mic=1, protocols=None, extensions=None, heartbeat_freq=None, byterate=16000,
@@ -47,7 +50,9 @@ class MyClient(WebSocketClient):
             else:
                 print >> sys.stderr, "\n", e
                 print >> sys.stderr, "\nCould not open microphone. Please try a different device."
-            sys.exit(1)
+            global fatal_error
+            fatal_error = True
+            sys.exit(0)
 
         def mic_to_ws():  # uses stream
             try:
@@ -57,9 +62,20 @@ class MyClient(WebSocketClient):
                     #print >> sys.stderr, "sending", len(data), "bytes... ",
                     self.send_data(data)
             except IOError, e:
+                # usually a broken pipe
                 print e
-            self.send_data("")
-            self.send("EOS")
+            except AttributeError:
+                # currently raised when the socket gets closed by main thread
+                pass
+
+            # to voluntarily close the connection, we would use
+            #self.send_data("")
+            #self.send("EOS")
+
+            try:
+                self.close()
+            except IOError:
+                pass
 
         threading.Thread(target=mic_to_ws).start()
 
@@ -90,6 +106,12 @@ class MyClient(WebSocketClient):
             print >> sys.stderr, "Received error from server (status %d)" % response['status']
             if 'message' in response:
                 print >> sys.stderr, "Error message:",  response['message']
+            
+            global reconnect_mode
+            if reconnect_mode:
+                import time
+                print >> sys.stderr, "Sleeping for five seconds before reconnecting"
+                time.sleep(5)
 
 
     def closed(self, code, reason=None):
@@ -105,8 +127,9 @@ def setup():
     parser = argparse.ArgumentParser(description='Microphone client for silvius')
     parser.add_argument('-s', '--server', default="localhost", dest="server", help="Speech-recognition server")
     parser.add_argument('-p', '--port', default="8019", dest="port", help="Server port")
-    parser.add_argument('-r', '--rate', default=16000, dest="rate", type=int, help="Rate in bytes/sec at which audio should be sent to the server.")
+    #parser.add_argument('-r', '--rate', default=16000, dest="rate", type=int, help="Rate in bytes/sec at which audio should be sent to the server.")
     parser.add_argument('-d', '--device', default="-1", dest="device", type=int, help="Select a different microphone (give device ID)")
+    parser.add_argument('-k', '--keep-going', action="store_true", help="Keep reconnecting to the server after periods of silence")
     parser.add_argument('--save-adaptation-state', help="Save adaptation state to file")
     parser.add_argument('--send-adaptation-state', help="Send adaptation state from file")
     parser.add_argument('--content-type', default=content_type, help="Use the specified content type (default is " + content_type + ")")
@@ -116,10 +139,21 @@ def setup():
     content_type = args.content_type
     print >> sys.stderr, "Content-Type:", content_type
 
+    if(args.keep_going):
+        global reconnect_mode
+        global fatal_error
+        reconnect_mode = True
+        while(fatal_error == False):
+            print >> sys.stderr, "Reconnecting..."
+            run(args, content_type, path)
+    else:
+        run(args, content_type, path)
+
+def run(args, content_type, path):
     uri = "ws://%s:%s/%s?%s" % (args.server, args.port, path, urllib.urlencode([("content-type", content_type)]))
     print >> sys.stderr, "Connecting to", uri
 
-    ws = MyClient(uri, byterate=args.rate, mic=args.device, show_hypotheses=args.hypotheses,
+    ws = MyClient(uri, byterate=16000, mic=args.device, show_hypotheses=args.hypotheses,
                   save_adaptation_state_filename=args.save_adaptation_state, send_adaptation_state_filename=args.send_adaptation_state)
     ws.connect()
     #result = ws.get_full_hyp()
