@@ -22,6 +22,7 @@ class MyClient(WebSocketClient):
         self.byterate = byterate
         self.save_adaptation_state_filename = save_adaptation_state_filename
         self.send_adaptation_state_filename = send_adaptation_state_filename
+        self.chunk = 0
 
     def send_data(self, data):
         self.send(data, binary=True)
@@ -35,6 +36,9 @@ class MyClient(WebSocketClient):
         
         while stream is None:
             try:
+                # try adjusting this if you want fewer network packets
+                self.chunk = 2048 * 2 * sample_rate / self.byterate
+
                 mic = self.mic
                 if mic == -1:
                     mic = pa.get_default_input_device_info()['index']
@@ -45,29 +49,31 @@ class MyClient(WebSocketClient):
                     format = pyaudio.paInt16,
                     channels = 1,
                     input = True,
-                    input_device_index = mic)
+                    input_device_index = mic,
+                    frames_per_buffer = self.chunk)
             except IOError, e:
-                if(e.errno == 'Invalid sample rate'):
-                    sample_rate = int(pa.get_device_info_by_index(mic)['defaultSampleRate']) 
-                else:
-                    print >> sys.stderr, "\n", e
-                    print >> sys.stderr, "\nCould not open microphone. Please try a different device."
-                    global fatal_error
-                    fatal_error = True
-                    sys.exit(0)
+                if(e.errno == -9997 or e.errno == 'Invalid sample rate'):
+                    new_sample_rate = int(pa.get_device_info_by_index(mic)['defaultSampleRate'])
+                    if(sample_rate != new_sample_rate):
+                        sample_rate = new_sample_rate
+                        continue
+                print >> sys.stderr, "\n", e
+                print >> sys.stderr, "\nCould not open microphone. Please try a different device."
+                global fatal_error
+                fatal_error = True
+                sys.exit(0)
      
         def mic_to_ws():  # uses stream
             try:
                 print >> sys.stderr, "\nLISTENING TO MICROPHONE"
                 last_state = None
-                chunk = 2048 * 2 * sample_rate / self.byterate
                 while True:
-                    data = stream.read(chunk)
+                    data = stream.read(self.chunk)
                     #if sample_chan == 2:
                     #    data = audioop.tomono(data, 2, 1, 1)
                     if sample_rate != self.byterate:
                         (data, last_state) = audioop.ratecv(data, 2, 1, sample_rate, self.byterate, last_state)
-                    #print >> sys.stderr, "sending", len(data), "bytes... "
+
                     self.send_data(data)
             except IOError, e:
                 # usually a broken pipe
