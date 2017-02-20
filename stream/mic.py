@@ -28,38 +28,46 @@ class MyClient(WebSocketClient):
 
     def opened(self):
         import pyaudio
+        import audioop
         pa = pyaudio.PyAudio()
-        try:
-            mic = self.mic
-            if mic == -1:
-                mic = pa.get_default_input_device_info()['index']
-                print >> sys.stderr, "Selecting default mic"
-            print >> sys.stderr, "Using mic #", mic
-            stream = pa.open(
-                rate = self.byterate,
-                format = pyaudio.paInt16,
-                channels = 1,
-                input = True,
-                input_device_index = mic)
-        except IOError, e:
-            if(e.errno == 'Invalid sample rate'):
-                print >> sys.stderr, "\n", e
-                print >> sys.stderr, "\nCould not open microphone. 16K sampling not directly supported."
-                print >> sys.stderr, "Instead of using this device directly, please configure it from"
-                print >> sys.stderr, "within alsa or pulseaudio (run pavucontrol), which can do resampling."
-            else:
-                print >> sys.stderr, "\n", e
-                print >> sys.stderr, "\nCould not open microphone. Please try a different device."
-            global fatal_error
-            fatal_error = True
-            sys.exit(0)
-
+        sample_rate = self.byterate
+        stream = None 
+        
+        while stream is None:
+            try:
+                mic = self.mic
+                if mic == -1:
+                    mic = pa.get_default_input_device_info()['index']
+                    print >> sys.stderr, "Selecting default mic"
+                print >> sys.stderr, "Using mic #", mic
+                stream = pa.open(
+                    rate = sample_rate,
+                    format = pyaudio.paInt16,
+                    channels = 1,
+                    input = True,
+                    input_device_index = mic)
+            except IOError, e:
+                if(e.errno == 'Invalid sample rate'):
+                    sample_rate = int(pa.get_device_info_by_index(mic)['defaultSampleRate']) 
+                else:
+                    print >> sys.stderr, "\n", e
+                    print >> sys.stderr, "\nCould not open microphone. Please try a different device."
+                    global fatal_error
+                    fatal_error = True
+                    sys.exit(0)
+     
         def mic_to_ws():  # uses stream
             try:
                 print >> sys.stderr, "\nLISTENING TO MICROPHONE"
+                last_state = None
+                chunk = 2048 * 2 * sample_rate / self.byterate
                 while True:
-                    data = stream.read(2048*2)
-                    #print >> sys.stderr, "sending", len(data), "bytes... ",
+                    data = stream.read(chunk)
+                    #if sample_chan == 2:
+                    #    data = audioop.tomono(data, 2, 1, 1)
+                    if sample_rate != self.byterate:
+                        (data, last_state) = audioop.ratecv(data, 2, 1, sample_rate, self.byterate, last_state)
+                    #print >> sys.stderr, "sending", len(data), "bytes... "
                     self.send_data(data)
             except IOError, e:
                 # usually a broken pipe
