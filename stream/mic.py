@@ -15,7 +15,7 @@ class MyClient(WebSocketClient):
 
     def __init__(self, url, mic=1, protocols=None, extensions=None, heartbeat_freq=None, byterate=16000,
                  show_hypotheses=True,
-                 save_adaptation_state_filename=None, send_adaptation_state_filename=None):
+                 save_adaptation_state_filename=None, send_adaptation_state_filename=None, audio_gate=0):
         super(MyClient, self).__init__(url, protocols, extensions, heartbeat_freq)
         self.mic = mic
         self.show_hypotheses = show_hypotheses
@@ -23,6 +23,7 @@ class MyClient(WebSocketClient):
         self.save_adaptation_state_filename = save_adaptation_state_filename
         self.send_adaptation_state_filename = send_adaptation_state_filename
         self.chunk = 0
+        self.audio_gate = audio_gate
 
     def send_data(self, data):
         self.send(data, binary=True)
@@ -69,6 +70,10 @@ class MyClient(WebSocketClient):
                 last_state = None
                 while True:
                     data = stream.read(self.chunk)
+                    if self.audio_gate > 0:
+                        rms = audioop.rms(data, 2)
+                        if rms < self.audio_gate:
+                            data = '\00' * len(data)
                     #if sample_chan == 2:
                     #    data = audioop.tomono(data, 2, 1, 1)
                     if sample_rate != self.byterate:
@@ -148,6 +153,7 @@ def setup():
     parser.add_argument('--send-adaptation-state', help="Send adaptation state from file")
     parser.add_argument('--content-type', default=content_type, help="Use the specified content type (default is " + content_type + ")")
     parser.add_argument('--hypotheses', default=True, type=int, help="Show partial recognition hypotheses (default: 1)")
+    parser.add_argument('-g', '--audio-gate', default=0, type=int, help="Audio-gate level to reduce detections when not talking")
     args = parser.parse_args()
 
     content_type = args.content_type
@@ -168,7 +174,7 @@ def run(args, content_type, path):
     print >> sys.stderr, "Connecting to", uri
 
     ws = MyClient(uri, byterate=16000, mic=args.device, show_hypotheses=args.hypotheses,
-                  save_adaptation_state_filename=args.save_adaptation_state, send_adaptation_state_filename=args.send_adaptation_state)
+                  save_adaptation_state_filename=args.save_adaptation_state, send_adaptation_state_filename=args.send_adaptation_state, audio_gate=args.audio_gate)
     ws.connect()
     #result = ws.get_full_hyp()
     #print result.encode('utf-8')
