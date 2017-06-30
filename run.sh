@@ -48,7 +48,8 @@ case "$action" in
         rm -f .selected-mic
         ;;
     -G|--show-gate)
-        python stream/audio-gate-level.py
+        check_microphone
+        python stream/audio-gate-level.py -d $which
         ;;
     *)
         echo "Unknown command '$action'. Run with --help to see usage."
