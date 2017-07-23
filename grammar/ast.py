@@ -1,3 +1,5 @@
+# Represents a node containing some commands to execute.
+
 from copy import deepcopy
 
 class AST:

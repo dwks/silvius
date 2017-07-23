@@ -1,3 +1,5 @@
+# Low-level execution of AST commands using xdotool.
+
 import os
 from spark import GenericASTTraversal
 

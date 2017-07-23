@@ -1,4 +1,4 @@
-# Main
+# Main file. Parse new commands from stdin until EOF.
 
 from scan import scan
 from parse import parse

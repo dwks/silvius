@@ -1,3 +1,5 @@
+# Lexer that produces a sequence of tokens (keywords + ANY).
+
 import re
 
 keywords = [

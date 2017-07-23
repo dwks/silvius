@@ -1,4 +1,4 @@
-# Generate language model
+# Generate language model, for use in training new speech models.
 
 from scan import scan
 from parse import parse
