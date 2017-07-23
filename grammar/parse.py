@@ -39,6 +39,7 @@ class CoreParser(GenericParser):
             single_command ::= movement
             single_command ::= character
             single_command ::= editing
+            single_command ::= modifiers
             single_command ::= english
             single_command ::= word_sentence
             single_command ::= word_phrase
@@ -210,6 +211,17 @@ class CoreParser(GenericParser):
             ])
         else:
             return AST('raw_char', [ value[args[0].type] ])
+
+    def p_modifiers(self, args):
+        '''
+            modifiers ::= control single_command
+            modifiers ::= alternative single_command
+        '''
+        value = {
+            'control' : 'ctrl',
+            'alternative' : 'alt'
+        }
+        return AST('mod_plus_key', [ value[args[0].type], args[1].meta[0] ])
 
     def p_english(self, args):
         '''

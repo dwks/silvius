@@ -16,6 +16,8 @@ class ExecuteCommands(GenericASTTraversal):
         self.automator.key(node.meta[0])
     def n_raw_char(self, node):
         self.automator.raw_key(node.meta[0])
+    def n_mod_plus_key(self, node):
+        self.automator.mod_plus_key(node.meta[0], node.meta[1])
     def n_movement(self, node):
         self.automator.key(node.meta[0].type)
     def n_sequence(self, node):
@@ -73,6 +75,9 @@ class Automator:
     def key(self, k):
         if(len(k) > 1): k = k.capitalize()
         self.xdo('key ' + k)
+    def mod_plus_key(self, m, k):
+        if(len(k) > 1): k = k.capitalize()
+        self.xdo('key ' + m + '+' + k)
 
 def execute(ast, real):
     ExecuteCommands(ast, real)

@@ -4,6 +4,7 @@ import re
 
 keywords = [
     'act',
+    'alternative',
     'ampersand',
     'arch',
     'backslash',
@@ -12,6 +13,7 @@ keywords = [
     'carrot',
     'charlie',
     'colon',
+    'control',
     'delta',
     'dollar',
     'dot',
