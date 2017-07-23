@@ -2,8 +2,13 @@
 
 from spark import GenericParser
 from spark import GenericASTBuilder
-from errors import GrammaticalError
 from ast import AST
+
+class GrammaticalError(Exception):
+    def __init__(self, string):
+        self.string = string
+    def __str__(self):
+        return self.string
 
 class CoreParser(GenericParser):
     def __init__(self, start):

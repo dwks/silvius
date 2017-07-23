@@ -2,8 +2,8 @@
 
 from scan import scan
 from parse import parse
+from parse import GrammaticalError
 from execute import execute
-from errors import GrammaticalError
 from ast import printAST
 
 if __name__ == '__main__':
