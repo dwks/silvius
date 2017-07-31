@@ -154,6 +154,7 @@ class CoreParser(GenericParser):
         '''
             character ::= act
             character ::= colon
+            character ::= semicolon
             character ::= single quote
             character ::= double quote
             character ::= equal
@@ -173,12 +174,15 @@ class CoreParser(GenericParser):
             character ::= plus
             character ::= backslash
             character ::= dot
+            character ::= dit
             character ::= slash
             character ::= question
+            character ::= comma
         '''
         value = {
             'act'   : 'Escape',
             'colon' : 'colon',
+            'semicolon' : 'semicolon',
             'single': 'apostrophe',
             'double': 'quotedbl',
             'equal' : 'equal',
@@ -198,8 +202,10 @@ class CoreParser(GenericParser):
             'plus': 'plus',
             'backslash': 'backslash',
             'dot': 'period',
+            'dit': 'period',
             'slash': 'slash',
-            'question': 'question'
+            'question': 'question',
+            'comma': 'comma'
         }
         return AST('raw_char', [ value[args[0].type] ])
 
@@ -222,10 +228,12 @@ class CoreParser(GenericParser):
     def p_modifiers(self, args):
         '''
             modifiers ::= control single_command
+            modifiers ::= alt single_command
             modifiers ::= alternative single_command
         '''
         value = {
             'control' : 'ctrl',
+            'alt' : 'alt',
             'alternative' : 'alt'
         }
         return AST('mod_plus_key', [ value[args[0].type], args[1].meta[0] ])
