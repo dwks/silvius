@@ -269,6 +269,5 @@ class SingleInputParser(CoreParser):
         else:
             return AST('')
 
-def parse(tokens):
-    parser = SingleInputParser()
+def parse(parser, tokens):
     return parser.parse(tokens)

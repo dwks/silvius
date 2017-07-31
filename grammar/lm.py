@@ -1,6 +1,5 @@
 # Generate language model, for use in training new speech models.
 
-from scan import scan
 from parse import parse
 from parse import SingleInputParser
 from copy import deepcopy
@@ -14,7 +13,7 @@ def find_terminals(rules, visited, which, found):
         for t in tokens:
             if t in rules:
                 find_terminals(rules, visited, t, found)
-            elif t != 'END' and t != '|-':
+            elif t != 'END' and t != 'ANY' and t != '|-':
                 found.append(t)
 
 def find_sequences(rules, visited, which, found=[], level=0):
@@ -109,6 +108,13 @@ def make_lm(rules, visited, which, prefix):
             elif t != 'END' and t != '|-':
                 print prefix, t
                 new_prefix.append(t)
+
+def get_terminals(parser):
+    visited = {}
+    terminals = []
+    find_terminals(parser.rules, visited, 'START', terminals)
+    keywords = set(terminals)
+    return sorted(keywords)
 
 if __name__ == '__main__':
     import sys
