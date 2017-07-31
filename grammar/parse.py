@@ -36,6 +36,7 @@ class CoreParser(GenericParser):
         '''
             single_command ::= letter
             single_command ::= sky_letter
+            single_command ::= number_rule
             single_command ::= movement
             single_command ::= character
             single_command ::= editing
@@ -63,25 +64,31 @@ class CoreParser(GenericParser):
     def p_repeat(self, args):
         '''
             repeat ::=
-            repeat ::= number
+            repeat ::= _number
         '''
         if len(args) > 0:
             return args[0]
         else:
             return None
 
-    def p_number(self, args):
+    def p_number_rule(self, args):
         '''
-            number ::= zero
-            number ::= one
-            number ::= two
-            number ::= three
-            number ::= four
-            number ::= five
-            number ::= six
-            number ::= seven
-            number ::= eight
-            number ::= nine
+            number_rule ::= number _number
+        '''
+        return AST('char', [ chr(ord('0') + args[1]) ])
+
+    def p__number(self, args):
+        '''
+            _number ::= zero
+            _number ::= one
+            _number ::= two
+            _number ::= three
+            _number ::= four
+            _number ::= five
+            _number ::= six
+            _number ::= seven
+            _number ::= eight
+            _number ::= nine
         '''
         # doesn't work right now
         #for v in value:
