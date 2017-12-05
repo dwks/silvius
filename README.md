@@ -19,4 +19,6 @@ https://groups.google.com/forum/#!forum/silvius
 
 ## About
 
-Created by David Williams-King with Professor Homayoon Beigi at Columbia University. Send comments to `dwk at voxhub dot io`.
+Created by David Williams-King with Professor Homayoon Beigi at Columbia University. 
+
+Send comments to `dwk at voxhub dot io`.
