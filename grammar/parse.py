@@ -236,7 +236,11 @@ class CoreParser(GenericParser):
             'alt' : 'alt',
             'alternative' : 'alt'
         }
-        return AST('mod_plus_key', [ value[args[0].type], args[1].meta[0] ])
+        if(args[1].type == 'mod_plus_key'):
+            args[1].meta.insert(0, value[args[0].type])
+            return args[1]
+        else:
+            return AST('mod_plus_key', [ value[args[0].type] ], [ args[1] ] )
 
     def p_english(self, args):
         '''

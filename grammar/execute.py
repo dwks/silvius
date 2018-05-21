@@ -9,15 +9,33 @@ class ExecuteCommands(GenericASTTraversal):
         self.output = []
         self.automator = Automator(real)
 
-        self.postorder()
+        self.postorder_flat()
         self.automator.flush()
 
+    # a version of postorder which does not visit children recursively
+    def postorder_flat(self, node=None):
+        if node is None:
+            node = self.ast
+
+        #for kid in node:
+        #    self.postorder(kid)
+
+        name = 'n_' + self.typestring(node)
+        if hasattr(self, name):
+            func = getattr(self, name)
+            func(node)
+        else:
+            self.default(node)
+
+    def n_chain(self, node):
+        for n in node.children:
+            self.postorder_flat(n)
     def n_char(self, node):
         self.automator.key(node.meta[0])
     def n_raw_char(self, node):
         self.automator.raw_key(node.meta[0])
     def n_mod_plus_key(self, node):
-        self.automator.mod_plus_key(node.meta[0], node.meta[1])
+        self.automator.mod_plus_key(node.meta, node.children[0].meta[0])
     def n_movement(self, node):
         self.automator.key(node.meta[0].type)
     def n_sequence(self, node):
@@ -40,8 +58,6 @@ class ExecuteCommands(GenericASTTraversal):
             self.automator.xdo(xdo)
 
     def default(self, node):
-#        for child in node.children:
-#            self.automator.execute(child.command)
         pass
 
 class Automator:
@@ -75,9 +91,12 @@ class Automator:
     def key(self, k):
         if(len(k) > 1): k = k.capitalize()
         self.xdo('key ' + k)
-    def mod_plus_key(self, m, k):
-        if(len(k) > 1): k = k.capitalize()
-        self.xdo('key ' + m + '+' + k)
+    def mod_plus_key(self, mods, k):
+        command = 'key '
+        command += '+'.join(mods)
+        if(len(k) > 1 and k != 'plus' and k != 'apostrophe' and k != 'period' and k != 'minus'): k = k.capitalize()
+        command += '+' + k
+        self.xdo(command)
 
 def execute(ast, real):
     ExecuteCommands(ast, real)
