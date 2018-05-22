@@ -53,6 +53,7 @@ class ExecuteCommands(GenericASTTraversal):
         pass
 
     def n_repeat(self, node):
+        self.postorder_flat(node.children[0])
         xdo = self.automator.xdo_list[-1]
         for n in range(1, node.meta[0]):
             self.automator.xdo(xdo)
