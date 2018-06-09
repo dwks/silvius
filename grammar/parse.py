@@ -295,13 +295,28 @@ class CoreParser(GenericParser):
 class SingleInputParser(CoreParser):
     def __init__(self):
         CoreParser.__init__(self, 'single_input')
+        self.sleeping = False
+
+    def p_sleep_commands(self, args):
+        '''
+            sleep_commands ::= go to sleep
+            sleep_commands ::= start listening
+        '''
+        if args[-1].type == 'sleep':
+            self.sleeping = True
+            print 'Going to sleep.'
+        else:
+            self.sleeping = False
+            print 'Waking from sleep'
+        return AST('')
 
     def p_single_input(self, args):
         '''
             single_input ::= END
+            single_input ::= sleep_commands END
             single_input ::= chained_commands END
         '''
-        if len(args) > 0:
+        if len(args) > 0 and not self.sleeping:
             return args[0]
         else:
             return AST('')
