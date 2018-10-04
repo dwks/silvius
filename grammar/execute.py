@@ -1,13 +1,22 @@
 # Low-level execution of AST commands using xdotool.
 
-import os
+import os, platform
 from spark import GenericASTTraversal
+from automators import XDoAutomator, CLIClickAutomator, NirCmdAutomator
 
 class ExecuteCommands(GenericASTTraversal):
     def __init__(self, ast, real = True):
         GenericASTTraversal.__init__(self, ast)
         self.output = []
-        self.automator = Automator(real)
+        
+        if 'Linux' in platform.system():
+            self.automator = XDoAutomator(real)
+        elif 'Darwin' in platform.system():
+            self.automator = CLIClickAutomator(real)
+        elif 'Windows' in platform.system():
+            self.automator = NirCmdAutomator(real)
+        else:
+            print "No suitable automator for platform", platform.system()
 
         self.postorder_flat()
         self.automator.flush()
@@ -37,7 +46,7 @@ class ExecuteCommands(GenericASTTraversal):
     def n_mod_plus_key(self, node):
         self.automator.mod_plus_key(node.meta, node.children[0].meta[0])
     def n_movement(self, node):
-        self.automator.key(node.meta[0].type)
+        self.automator.key_movement(node.meta[0].type)
     def n_sequence(self, node):
         for c in node.meta[0]:
             self.automator.raw_key(c)
@@ -54,50 +63,13 @@ class ExecuteCommands(GenericASTTraversal):
 
     def n_repeat(self, node):
         self.postorder_flat(node.children[0])
-        xdo = self.automator.xdo_list[-1]
+        char_list = self.automator.char_list[-1]
         for n in range(1, node.meta[0]):
-            self.automator.xdo(xdo)
+            self.automator.add_keystrokes(char_list)
 
     def default(self, node):
         pass
 
-class Automator:
-    def __init__(self, real = True):
-        self.xdo_list = []
-        self.real = real
-
-    def xdo(self, xdo):
-        self.xdo_list.append(xdo)
-
-    def flush(self):
-        if len(self.xdo_list) == 0: return
-
-        command = '/usr/bin/xdotool' + ' '
-        command += ' '.join(self.xdo_list)
-        self.execute(command)
-        self.xdo_list = []
-
-    def execute(self, command):
-        if command == '': return
-
-        print "`%s`" % command
-        if self.real:
-            os.system(command)
-
-    def raw_key(self, k):
-        if(k == "'"): k = 'apostrophe'
-        elif(k == '.'): k = 'period'
-        elif(k == '-'): k = 'minus'
-        self.xdo('key ' + k)
-    def key(self, k):
-        if(len(k) > 1): k = k.capitalize()
-        self.xdo('key ' + k)
-    def mod_plus_key(self, mods, k):
-        command = 'key '
-        command += '+'.join(mods)
-        if(len(k) > 1 and k != 'plus' and k != 'apostrophe' and k != 'period' and k != 'minus'): k = k.capitalize()
-        command += '+' + k
-        self.xdo(command)
 
 def execute(ast, real):
     ExecuteCommands(ast, real)
