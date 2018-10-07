@@ -1,0 +1,40 @@
+`/usr/bin/xdotool key up`
+`/usr/bin/xdotool key down key up`
+`/usr/bin/xdotool key 9`
+`/usr/bin/xdotool key a key b key c key d key e key f key g`
+`/usr/bin/xdotool key Escape`
+`/usr/bin/xdotool key colon`
+`/usr/bin/xdotool key semicolon`
+`/usr/bin/xdotool key apostrophe`
+`/usr/bin/xdotool key quotedbl`
+`/usr/bin/xdotool key equal`
+`/usr/bin/xdotool key space`
+`/usr/bin/xdotool key Tab`
+`/usr/bin/xdotool key exclam`
+`/usr/bin/xdotool key numbersign`
+`/usr/bin/xdotool key dollar`
+`/usr/bin/xdotool key percent`
+`/usr/bin/xdotool key caret`
+`/usr/bin/xdotool key ampersand`
+`/usr/bin/xdotool key asterisk`
+`/usr/bin/xdotool key parenleft`
+`/usr/bin/xdotool key parenright`
+`/usr/bin/xdotool key minus`
+`/usr/bin/xdotool key underscore`
+`/usr/bin/xdotool key plus`
+`/usr/bin/xdotool key backslash`
+`/usr/bin/xdotool key period`
+`/usr/bin/xdotool key period`
+`/usr/bin/xdotool key slash`
+`/usr/bin/xdotool key question`
+`/usr/bin/xdotool key comma`
+`/usr/bin/xdotool key A`
+`/usr/bin/xdotool key y key e key s key t key e key r key d key a key y`
+`/usr/bin/xdotool key i key t key space key i key s key space key d key a key r key k key space key o key u key t key s key i key d key e`
+`/usr/bin/xdotool key I key t key space key i key s key space key d key a key r key k key space key o key u key t key s key i key d key e`
+`/usr/bin/xdotool key c key d key space key period key period key Return`
+`/usr/bin/xdotool key BackSpace key BackSpace key BackSpace`
+`/usr/bin/xdotool key BackSpace key BackSpace key BackSpace`
+`/usr/bin/xdotool key ctrl+x key u`
+`/usr/bin/xdotool key ctrl+x key 1`
+`/usr/bin/xdotool key ctrl+alt+z`

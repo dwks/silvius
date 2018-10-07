@@ -1,0 +1,40 @@
+`C:\Tools\nircmd-x64\nircmd.exe sendkeypress up`
+`C:\Tools\nircmd-x64\nircmd.exe sendkeypress down down`
+`C:\Tools\nircmd-x64\nircmd.exe sendkeypress 9`
+`C:\Tools\nircmd-x64\nircmd.exe sendkeypress a b c d e f g`
+`C:\Tools\nircmd-x64\nircmd.exe sendkeypress esc`
+`C:\Tools\nircmd-x64\nircmd.exe sendkeypress shift+0xba`
+`C:\Tools\nircmd-x64\nircmd.exe sendkeypress 0xba`
+`C:\Tools\nircmd-x64\nircmd.exe sendkeypress 0xde`
+`C:\Tools\nircmd-x64\nircmd.exe sendkeypress shift+0xde`
+`C:\Tools\nircmd-x64\nircmd.exe sendkeypress 0xbb`
+`C:\Tools\nircmd-x64\nircmd.exe sendkeypress spc`
+`C:\Tools\nircmd-x64\nircmd.exe sendkeypress tab`
+`C:\Tools\nircmd-x64\nircmd.exe sendkeypress shift+0x31`
+`C:\Tools\nircmd-x64\nircmd.exe sendkeypress shift+0x33`
+`C:\Tools\nircmd-x64\nircmd.exe sendkeypress shift+0x34`
+`C:\Tools\nircmd-x64\nircmd.exe sendkeypress shift+0x35`
+`C:\Tools\nircmd-x64\nircmd.exe sendkeypress shift+0x36`
+`C:\Tools\nircmd-x64\nircmd.exe sendkeypress shift+0x37`
+`C:\Tools\nircmd-x64\nircmd.exe sendkeypress shift+0x38`
+`C:\Tools\nircmd-x64\nircmd.exe sendkeypress shift+0x39`
+`C:\Tools\nircmd-x64\nircmd.exe sendkeypress shift+0x30`
+`C:\Tools\nircmd-x64\nircmd.exe sendkeypress minus`
+`C:\Tools\nircmd-x64\nircmd.exe sendkeypress shift+0xbd`
+`C:\Tools\nircmd-x64\nircmd.exe sendkeypress shift+0xbb`
+`C:\Tools\nircmd-x64\nircmd.exe sendkeypress 0xe2`
+`C:\Tools\nircmd-x64\nircmd.exe sendkeypress 0xbe`
+`C:\Tools\nircmd-x64\nircmd.exe sendkeypress 0xbe`
+`C:\Tools\nircmd-x64\nircmd.exe sendkeypress 0xbf`
+`C:\Tools\nircmd-x64\nircmd.exe sendkeypress shift+0xbf`
+`C:\Tools\nircmd-x64\nircmd.exe sendkeypress 0xbc`
+`C:\Tools\nircmd-x64\nircmd.exe sendkeypress shift+A`
+`C:\Tools\nircmd-x64\nircmd.exe sendkeypress y e s t e r d a y`
+`C:\Tools\nircmd-x64\nircmd.exe sendkeypress i t spc i s spc d a r k spc o u t s i d e`
+`C:\Tools\nircmd-x64\nircmd.exe sendkeypress I t spc i s spc d a r k spc o u t s i d e`
+`C:\Tools\nircmd-x64\nircmd.exe sendkeypress c d spc 0xbe 0xbe 0x0d`
+`C:\Tools\nircmd-x64\nircmd.exe sendkeypress backspace backspace backspace`
+`C:\Tools\nircmd-x64\nircmd.exe sendkeypress backspace backspace backspace`
+`C:\Tools\nircmd-x64\nircmd.exe sendkeypress ctrl+x u`
+`C:\Tools\nircmd-x64\nircmd.exe sendkeypress ctrl+x 1`
+`C:\Tools\nircmd-x64\nircmd.exe sendkeypress ctrl+alt+z`

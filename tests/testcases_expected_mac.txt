@@ -1,0 +1,40 @@
+`cliclick kp:arrow-up`
+`cliclick kp:arrow-down kp:arrow-down`
+`cliclick t:9`
+`cliclick t:a t:b t:c t:d t:e t:f t:g`
+`cliclick kp:esc`
+`cliclick t:':'`
+`cliclick t:';'`
+`cliclick t:"'"`
+`cliclick t:'"'`
+`cliclick t:'='`
+`cliclick kp:space`
+`cliclick kp:tab`
+`cliclick t:'!'`
+`cliclick t:'#'`
+`cliclick t:'$'`
+`cliclick t:'%'`
+`cliclick t:'^'`
+`cliclick t:'&'`
+`cliclick t:'*'`
+`cliclick t:'('`
+`cliclick t:')'`
+`cliclick t:'-'`
+`cliclick t:'_'`
+`cliclick t:'+'`
+`cliclick t:'\'`
+`cliclick t:'.'`
+`cliclick t:'.'`
+`cliclick t:'/'`
+`cliclick t:'?'`
+`cliclick t:','`
+`cliclick t:A`
+`cliclick t:y t:e t:s t:t t:e t:r t:d t:a t:y`
+`cliclick t:i t:t kp:space t:i t:s kp:space t:d t:a t:r t:k kp:space t:o t:u t:t t:s t:i t:d t:e`
+`cliclick t:I t:t kp:space t:i t:s kp:space t:d t:a t:r t:k kp:space t:o t:u t:t t:s t:i t:d t:e`
+`cliclick t:c t:d kp:space t:'.' t:'.' kp:return`
+`cliclick kp:delete kp:delete kp:delete`
+`cliclick kp:delete kp:delete kp:delete`
+`cliclick w:10 kd:ctrl t:x ku:ctrl t:u`
+`cliclick w:10 kd:ctrl t:x ku:ctrl t:1`
+`cliclick w:10 kd:ctrl,alt t:z ku:ctrl,alt`

@@ -1,0 +1,40 @@
+up
+down two
+number nine
+arch bravo charlie delta echo fox golf
+act
+colon
+semicolon
+single quote
+double quote
+equal
+space
+tab
+bang
+hash
+dollar
+percent
+carrot
+ampersand
+star
+late
+rate
+minus
+underscore
+plus
+backslash
+dot
+dit
+slash
+question
+comma
+sky arch
+word yesterday
+phrase it is dark outside
+sentence it is dark outside
+charlie delta space dot dot slap
+scratch scratch scratch
+scratch three
+control expert uniform
+control expert number one
+control alt zulu
