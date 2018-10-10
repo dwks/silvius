@@ -1,7 +1,7 @@
 # Low-level execution of AST commands using xdotool.
 
 import os, string
-
+import scan
 
 class Automator:
     def __init__(self, real = True):
@@ -75,7 +75,9 @@ class XDoAutomator(Automator):
     def mod_plus_key(self, mods, k):
         command = 'key '
         command += '+'.join(mods)
-        if(len(k) > 1 and k != 'plus' and k != 'apostrophe' and k != 'period' and k != 'minus'): k = k.capitalize()
+        if isinstance(k, scan.Token):
+            k = k.type
+        if(len(k) > 1 and k != 'plus' and k != 'apostrophe' and k != 'period' and k != 'minus' and k != 'space'): k = k.capitalize()
         command += '+' + k
         self.add_keystrokes(command)
 
@@ -142,6 +144,14 @@ class CLIClickAutomator(Automator):
             return "t:','"
         elif(lower_k == 'space'):
             return "kp:space"
+        elif(lower_k == 'left'):
+            return "kp:arrow-left"
+        elif(lower_k == 'right'):
+            return "kp:arrow-right"
+        elif(lower_k == 'up'):
+            return "kp:arrow-up"
+        elif(lower_k == 'down'):
+            return "kp:arrow-down"
         elif(len(lower_k) == 1 and (lower_k[0].isalpha() or lower_k[0].isdigit())):
             return "t:" + k[0]
         else:
@@ -162,6 +172,8 @@ class CLIClickAutomator(Automator):
     def mod_plus_key(self, mods, k):
         command = "w:10 kd:"
         command += ','.join(mods)
+        if isinstance(k, scan.Token):
+            k = k.type
         if(len(k) > 1 and k != 'plus' and k != 'apostrophe' and k != 'period' and k != 'minus'): k = k.capitalize()
         command += " "
         command += self.transform_key(k)
@@ -236,6 +248,12 @@ class NirCmdAutomator(Automator):
                        'english_us': 'tab' },
     }
 
+    def transform_key(self, k):
+        if k.lower() in self.keymaps:
+            return self.keymaps[k.lower()][self.keymap].lower()
+        else:
+            return k    
+    
     def flush(self):
         if len(self.char_list) == 0: return
 
@@ -245,12 +263,7 @@ class NirCmdAutomator(Automator):
         self.char_list = []
 
     def raw_key(self, k):
-        if k.lower() in self.keymaps:
-            self.add_keystrokes(
-                self.keymaps[k.lower()][self.keymap].lower()
-            )
-        else:
-            self.add_keystrokes(k)
+        self.add_keystrokes(self.transform_key(k))
 
     def key_movement(self, k):
         self.add_keystrokes(k)
@@ -265,7 +278,6 @@ class NirCmdAutomator(Automator):
             k = k.type
         command = ""
         command += '+'.join(mods)
-        if(len(k) > 1 and k != 'plus' and k != 'apostrophe' and k != 'period' and k != 'minus'): k = k.capitalize()
         command += "+"
-        command += k
+        command += self.transform_key(k)
         self.key_nocaps(command)

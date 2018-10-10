@@ -1,5 +1,5 @@
-`/usr/bin/xdotool key up`
-`/usr/bin/xdotool key down key up`
+`/usr/bin/xdotool key Up`
+`/usr/bin/xdotool key Down key Down`
 `/usr/bin/xdotool key 9`
 `/usr/bin/xdotool key a key b key c key d key e key f key g`
 `/usr/bin/xdotool key Escape`
@@ -38,3 +38,5 @@
 `/usr/bin/xdotool key ctrl+x key u`
 `/usr/bin/xdotool key ctrl+x key 1`
 `/usr/bin/xdotool key ctrl+alt+z`
+`/usr/bin/xdotool key ctrl+space`
+`/usr/bin/xdotool key ctrl+Left`

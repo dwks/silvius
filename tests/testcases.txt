@@ -38,3 +38,5 @@ scratch three
 control expert uniform
 control expert number one
 control alt zulu
+control space
+control left

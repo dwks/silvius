@@ -38,3 +38,5 @@
 `cliclick w:10 kd:ctrl t:x ku:ctrl t:u`
 `cliclick w:10 kd:ctrl t:x ku:ctrl t:1`
 `cliclick w:10 kd:ctrl,alt t:z ku:ctrl,alt`
+`cliclick w:10 kd:ctrl kp:space ku:ctrl`
+`cliclick w:10 kd:ctrl kp:arrow-left ku:ctrl`
