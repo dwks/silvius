@@ -391,7 +391,12 @@ class CoreParser(GenericParser):
 
 class SingleInputParser(CoreParser):
     def __init__(self):
+        # if you have the issue that commands fail because spurious
+        # tokens ('i', 'the',...) are prepended to the acual command,
+        # try commenting the 'single_input' line, and uncommenting
+        # the 'single_input_discard_junk' line.
         CoreParser.__init__(self, 'single_input')
+        #CoreParser.__init__(self, 'single_input_discard_junk')
         self.sleeping = False
 
     def p_sleep_commands(self, args):
@@ -413,10 +418,35 @@ class SingleInputParser(CoreParser):
             single_input ::= sleep_commands END
             single_input ::= chained_commands END
         '''
-        if len(args) > 0 and not self.sleeping:
-            return args[0]
+        if len(args) > 1 and not self.sleeping:
+            return args[1]
         else:
             return AST('')
+
+    def p_single_input_discard_junk(self, args):
+        '''
+            single_input_discard_junk ::= END
+            single_input_discard_junk ::= junk_tokens sleep_commands END
+            single_input_discard_junk ::= junk_tokens chained_commands END
+        '''
+        if len(args) > 1 and not self.sleeping:
+            return args[1]
+        else:
+            return AST('')
+
+    # With some models, Kaldi may return spurious tokens in response
+    # to noise. If that happens just before we say a command, it will
+    # make the command fail. This "dummy" rule will swallows these tokens.
+    def p_junk_tokens(self, args):
+        '''
+            junk_tokens ::=
+            junk_tokens ::= i junk_tokens
+            junk_tokens ::= the junk_tokens
+            junk_tokens ::= a junk_tokens
+            junk_tokens ::= and junk_tokens
+        '''
+        return AST('')
+
 
 def parse(parser, tokens):
     return parser.parse(tokens)
