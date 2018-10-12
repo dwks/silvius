@@ -40,3 +40,5 @@
 `/usr/bin/xdotool key ctrl+alt+z`
 `/usr/bin/xdotool key ctrl+space`
 `/usr/bin/xdotool key ctrl+Left`
+`/usr/bin/xdotool key 2 key 5`
+`/usr/bin/xdotool key 4 key 0 key 2 key 8 key 1 key 5`

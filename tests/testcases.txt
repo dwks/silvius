@@ -40,3 +40,5 @@ control expert number one
 control alt zulu
 control space
 control left
+number twenty five
+number four hundred two thousand eight hundred fifteen

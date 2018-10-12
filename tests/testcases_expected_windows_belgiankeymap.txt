@@ -40,3 +40,5 @@
 `C:\Tools\nircmd-x64\nircmd.exe sendkeypress ctrl+alt+z`
 `C:\Tools\nircmd-x64\nircmd.exe sendkeypress ctrl+spc`
 `C:\Tools\nircmd-x64\nircmd.exe sendkeypress ctrl+left`
+`C:\Tools\nircmd-x64\nircmd.exe sendkeypress 2 5`
+`C:\Tools\nircmd-x64\nircmd.exe sendkeypress 4 0 2 8 1 5`

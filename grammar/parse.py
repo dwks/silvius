@@ -100,7 +100,7 @@ class CoreParser(GenericParser):
             number_rule ::= number million_number_set
             number_rule ::= number billion_number_set
         '''
-        return AST('char', [ str(args[1]) ])
+        return AST('sequence', [ str(args[1]) ])
     def p_number_set(self, args):
         '''
             number_set ::= _firstnumbers
