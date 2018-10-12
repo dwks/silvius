@@ -84,6 +84,38 @@ class XDoAutomator(Automator):
 
 class CLIClickAutomator(Automator):
 
+    keymap = {
+        "apostrophe": 't:"\'"',
+        'quotedbl'  : "t:'\"'",
+        'period'    : "t:'.'",
+        'minus'     : "t:'-'",
+        'equal'     : "t:'='",
+        'colon'     : "t:':'",
+        'semicolon' : "t:';'",
+        'backspace' : "kp:delete",
+        'escape'    : "kp:esc",
+        'exclam'    : "t:'!'",
+        'numbersign': "t:'#'",
+        'dollar'    : "t:'$'",
+        'percent'   : "t:'%'",
+        'caret'     : "t:'^'",
+        'ampersand' : "t:'&'",
+        'asterisk'  : "t:'*'",
+        'parenleft' : "t:'('",
+        'parenright': "t:')'",
+        'underscore': "t:'_'",
+        'plus'      : "t:'+'",
+        'backslash' : "t:'\\'",
+        'slash'     : "t:'/'",
+        'question'  : "t:'?'",
+        'comma'     : "t:','",
+        'space'     : "kp:space",
+        'left'      : "kp:arrow-left",
+        'right'     : "kp:arrow-right",
+        'up'        : "kp:arrow-up",
+        'down'      : "kp:arrow-down"
+    }
+
     def flush(self):
         if len(self.char_list) == 0: return
 
@@ -94,64 +126,8 @@ class CLIClickAutomator(Automator):
 
     def transform_key(self, k):
         lower_k = k.lower()
-        if(lower_k == "apostrophe"):
-            return 't:"\'"' 
-        elif(lower_k == 'quotedbl'):
-            return "t:'\"'"
-        elif (lower_k == 'period'):
-            return "t:'.'"
-        elif(lower_k == 'minus'):
-            return "t:'-'"
-        elif(lower_k == 'equal'):
-            return "t:'='"
-        elif(lower_k == 'colon'):
-            return "t:':'"
-        elif(lower_k == 'semicolon'):
-            return "t:';'"
-        elif(lower_k == 'backspace'):
-            return "kp:delete"
-        elif(lower_k == 'escape'):
-            return "kp:esc"
-        elif(lower_k == 'exclam'):
-            return "t:'!'"
-        elif(lower_k == 'numbersign'):
-            return "t:'#'"
-        elif(lower_k == 'dollar'):
-            return "t:'$'"
-        elif(lower_k == 'percent'):
-            return "t:'%'"
-        elif(lower_k == 'caret'):
-            return "t:'^'"
-        elif(lower_k == 'ampersand'):
-            return "t:'&'"
-        elif(lower_k == 'asterisk'):
-            return "t:'*'"
-        elif(lower_k == 'parenleft'):
-            return "t:'('"            
-        elif(lower_k == 'parenright'):
-            return "t:')'"
-        elif(lower_k == 'underscore'):
-            return "t:'_'"
-        elif(lower_k == 'plus'):
-            return "t:'+'"
-        elif(lower_k == 'backslash'):
-            return "t:'\\'"
-        elif(lower_k == 'slash'):
-            return "t:'/'"
-        elif(lower_k == 'question'):
-            return "t:'?'"
-        elif(lower_k == 'comma'):
-            return "t:','"
-        elif(lower_k == 'space'):
-            return "kp:space"
-        elif(lower_k == 'left'):
-            return "kp:arrow-left"
-        elif(lower_k == 'right'):
-            return "kp:arrow-right"
-        elif(lower_k == 'up'):
-            return "kp:arrow-up"
-        elif(lower_k == 'down'):
-            return "kp:arrow-down"
+        if lower_k in self.keymap:
+            return self.keymap[lower_k]
         elif(len(lower_k) == 1 and (lower_k[0].isalpha() or lower_k[0].isdigit())):
             return "t:" + k[0]
         else:
