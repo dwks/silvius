@@ -418,8 +418,8 @@ class SingleInputParser(CoreParser):
             single_input ::= sleep_commands END
             single_input ::= chained_commands END
         '''
-        if len(args) > 1 and not self.sleeping:
-            return args[1]
+        if len(args) > 0 and not self.sleeping:
+            return args[0]
         else:
             return AST('')
 
