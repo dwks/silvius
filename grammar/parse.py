@@ -92,6 +92,10 @@ class CoreParser(GenericParser):
         'seventeen' : 17,
         'eighteen'  : 18,
         'nineteen'  : 19,
+
+        # sadly, kaldi often recognizes these by accident
+        'to'        : 2,
+        'for'       : 4,
     }
     def p_number_rule(self, args):
         '''
@@ -123,6 +127,8 @@ class CoreParser(GenericParser):
             _ones ::= seven
             _ones ::= eight
             _ones ::= nine
+            _ones ::= to
+            _ones ::= for
         '''
         return self.small_numbers[args[0].type]
     def p__firstnumbers(self, args):
@@ -147,6 +153,8 @@ class CoreParser(GenericParser):
             _firstnumbers ::= seventeen
             _firstnumbers ::= eighteen
             _firstnumbers ::= nineteen
+            _firstnumbers ::= to
+            _firstnumbers ::= for
         '''
         return self.small_numbers[args[0].type]
     def p__tens(self, args):
@@ -384,6 +392,8 @@ class CoreParser(GenericParser):
             raw_word ::= seven
             raw_word ::= eight
             raw_word ::= nine
+            raw_word ::= to
+            raw_word ::= for
         '''
         if(args[0].type == 'ANY'):
             return args[0].extra
