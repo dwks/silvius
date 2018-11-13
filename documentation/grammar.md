@@ -1,4 +1,48 @@
 
+# Introduction
+
+The broad goal of Silvius is to generate keystrokes based on voice
+commands. In contrast to more mainstream voice recognition solutions,
+the focus of Silvius is to generate commands, rather than perform
+transcription of "long-form" speech input. You won't use Silvius to
+dictate an e-mail, but on the other hand it is very well suited to
+control other applications.
+
+Silvius is an open-ended system: it can generate series of more or
+less arbitrary keystroke events based on speech input; and, with the
+grammar part being written in Python, it can easily be extended with
+new speech input patterns to generate new series of keystrokes.
+
+This works particularly well for keyboard-focused applications, where
+you can make Silvius send series of commands to perform complex
+manipulations in response to speech commands. Essentially, Silvius
+provides "macro" functionality for the application that is in focus. 
+
+As an example, suppose you use "shell" as the "trigger word" for Bash
+actions. It's very easy to extend the Silvius grammar to recognize
+"shell list", and make it produce the keystroke series ``ls -la
+``. For the command "shell change", you could make Silvius produce the
+keystroke series ``cd ``.
+
+With your shell in focus, you can then say "shell list slap" to view
+the contents of the current directory ("slap" produces an 'enter'
+keystroke). Or say "shell change dot dot slap" to go up one directory
+level. 
+
+You can do the same thing, for example, for your most frequently used
+Git commands, and for frequently used Emacs or Vim commands, etc. In
+this way, you build up a repertoire of voice commands that are
+applicable across the applications that you use.
+
+Silvius provides a bunch of basics, such as cursor navigation commands
+("up", "down", "left", "right"), a command for typing each letter
+(like the NATO alphabet), a command for typing numbers ("number two
+hundred fifteen") etc. 
+
+Beyond that, you are encouraged to experiment and add your own
+commands to the grammar.  This document explains how the grammar
+works, to enable you to do just that.
+
 # Silvius structure
 
 Silvius is built up out of two main parts, in a client-server setup:
@@ -291,10 +335,6 @@ is then a single AST node:
        'char'
 	    'c'
 		
-## More complex function bodies
-
-<insert examples with explanations>
-		
 		
 # Executor & Automator
 
@@ -319,16 +359,20 @@ designate functions that implement a command:
        <...>
 	   
 Depending on the platform, the executor will select a different
-automator.
+automator to generate the actual keystrokes.
 
 ## Automator
 
-The automator exists in 3 flavors:
+The automator exists in 3 flavors, for the 3 main operating
+systems. The general operating principle for each automator is that it
+uses an external, platform-specific tool to generate keystroke
+events. The keystrokes are then sent to the application that is in
+focus, as if you pressed these keys on the keyboard.
 
 * Linux:
 
     this implementation uses ``xdotool`` to implement the keystroke
-    generation behavior.
+    generation behavior. This tool requires X-windows to be installed.
 	
 * Windows:
 
