@@ -1,5 +1,18 @@
 
+* [Introduction](#Introduction)
+* [Silvius structure](#Silvius-structure)
+* [Scanner & Parser](#Scanner-&-Parser)
+  - [Tokens](#Tokens)
+  - [Abstract Syntax Tree](#Abstract-Syntax-Tree)
+  - [Parser implementation](#Parser-implementation)
+    + [Rule declaration](#Rule-declaration)
+    + [Rule matching](#Rule-matching)
+    + [Function body](#Function-body)
+* [Executor & Automator](#Executor-&-Automator)
+
+
 # Introduction
+
 
 The broad goal of Silvius is to generate keystrokes based on voice
 commands. In contrast to more mainstream voice recognition solutions,
@@ -250,7 +263,7 @@ The docstrings, then, list all the different rules for
 ``single_command`` and ``letter``. In these two examples, all rules
 happen to have a right-hand side that consists of a single terminal.
 
-## Rule matching
+### Rule matching
 
 Suppose the input is the word "charlie". The parser always starts by
 looking for a match for the ``single_input`` rule. The way it does
