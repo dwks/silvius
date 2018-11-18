@@ -228,7 +228,7 @@ both parts. Here are some examples:
         '''
             single_command ::= letter
             single_command ::= sky_letter
-			<...>
+            <...>
             single_command ::= word_phrase
         '''
         return args[0]
@@ -257,11 +257,25 @@ First of all, note that the function names are ``p_single_command``and
 ``p_letter``. The ``p_`` prefix tells Spark that these functions
 declare parsing rules. The ``single_command`` and ``letter`` parts
 matches the left-hand side of the rule declarations in the function's
-docstring.
+docstring:
+
+``def p_``**``letter``**``(self, args):``<br>
+&nbsp;&nbsp;&nbsp;&nbsp;``<...>``<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**``letter``**``::= arch``<br>
 
 The docstrings, then, list all the different rules for
 ``single_command`` and ``letter``. In these two examples, all rules
-happen to have a right-hand side that consists of a single terminal.
+happen to have a right-hand side that consists of a single terminal:
+
+        letter ::= arch
+        letter ::= bravo
+        letter ::= charlie
+        <...>
+        letter ::= yankee
+        letter ::= zulu
+
+In this example, ``letter`` will match any of the words "arch",
+"bravo",..., "zulu" in the input.
 
 ### Rule matching
 
