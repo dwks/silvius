@@ -6,6 +6,9 @@ from lm import get_terminals
 def find_keywords(parser):
     global keywords
     keywords = get_terminals(parser)
+    global noise
+    noise = set([x.lower() for x in ['[BREATH]', '[COUGH]', '[NOISE]', \
+        '[SMACK]', '[UH]', '[UM]', '<unk>']])
 
 class Token:
     def __init__(self, type, wordno=-1, extra=''):
@@ -25,6 +28,8 @@ def scan(line):
         wordno += 1
         if(t in keywords):
             tokens.append(Token(t, wordno))
+        elif(t in noise):
+            pass
         else:
             tokens.append(Token('ANY', wordno, t))
     tokens.append(Token('END'))
