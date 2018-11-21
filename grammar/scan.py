@@ -30,6 +30,8 @@ def scan(line):
         wordno += 1
         if(t in keywords):
             tokens.append(Token(t, wordno))
+        elif(t in noise):
+            pass
         else:
             tokens.append(Token('ANY', wordno, t))
     tokens.append(Token('END'))
