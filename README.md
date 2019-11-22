@@ -12,6 +12,12 @@ Silvius is an open source system for controlling Linux by voice.
 
 Please go here for detailed setup instructions: http://voxhub.io/silvius
 
+## Where is the Server?
+
+As of this writing, a freely accessible server runs on
+`silvius-server.voxhub.io` port `8019`. The code is available here:
+https://github.com/dwks/silvius-backend
+
 ## Learn More
 
 If you want to learn more, please join our mailing list:
